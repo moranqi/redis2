@@ -45,6 +45,9 @@ public class RedisDemo1 {
             conn.hincrBy(article, "votes", 1);
         }
     }
+    public List<Map<String,String>> getArticles1(Jedis conn, int page) {
+        return getArticles(conn,page,"time:");
+    }
     public List<Map<String,String>> getArticlesByScore(Jedis conn, int page) {
         return getArticles(conn,page,"score:");
     }
