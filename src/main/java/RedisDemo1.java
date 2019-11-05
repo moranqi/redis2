@@ -15,7 +15,7 @@ public class RedisDemo1 {
         System.out.println("We posted a new article with id:"+articleId);
 //        String articleId = "10";
 //        articleVote(conn,"other_user","article:"+articleId);
-        List<Map<String,String>> articles=getArticles(conn,1);
+        List<Map<String,String>> articles=getArticlesByScore(conn,1);
         printArticles(articles);
     }
     public String postArticle(Jedis conn, String user, String title, String link) {
@@ -45,11 +45,14 @@ public class RedisDemo1 {
             conn.hincrBy(article, "votes", 1);
         }
     }
-    public List<Map<String,String>> getArticles(Jedis conn, int page) {
+    public List<Map<String,String>> getArticlesByScore(Jedis conn, int page) {
+        return getArticles(conn,page,"score:");
+    }
+    public List<Map<String,String>> getArticles(Jedis conn, int page,String order) {
         int start = (page - 1) * ARTICLES_PER_PAGE;
         int end = start + ARTICLES_PER_PAGE - 1;
 
-        Set<String> ids = conn.zrevrange("score:", start, end);
+        Set<String> ids = conn.zrevrange(order, start, end);
         List<Map<String,String>> articles = new ArrayList<Map<String,String>>();
         for (String id : ids){
             Map<String,String> articleData = conn.hgetAll(id);
